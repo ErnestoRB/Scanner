@@ -1,0 +1,16 @@
+int main() {
+    
+    float n1 = 190.92;
+    int n2 = 190;
+    if(n1+n2 > 100) {
+        print(23); // comentario
+    }
+
+    /** esto es un comentario **/
+
+    int a=0;
+    while(a < 10) {
+        a = a + 10;
+    }
+
+}
