@@ -1,7 +1,4 @@
-use std::{
-    env::join_paths,
-    path::{self, Path},
-};
+use std::path::Path;
 
 use ::scanner::{
     data::{Cursor, TokenType},

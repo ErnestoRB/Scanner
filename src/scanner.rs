@@ -71,7 +71,7 @@ pub fn get_token<'a>(mut text: &'a str, cursor: &mut Cursor) -> (Result<Token, E
                                 error_cursor.col += 1;
                                 return (
                                     Err(Error {
-                                        message: "Simbolo no permitido!".to_string(),
+                                        message: format!("Simbolo '{}' no permitido", c),
                                         position: error_cursor,
                                         lexemme: c.to_string(),
                                     }),
@@ -168,7 +168,7 @@ pub fn get_token<'a>(mut text: &'a str, cursor: &mut Cursor) -> (Result<Token, E
                             return (
                                 Err(Error {
                                     position: error_cursor,
-                                    message: "Simbolo no permitido!".to_string(),
+                                    message: format!("Simbolo '{}' no permitido", c),
                                     lexemme: result,
                                 }),
                                 &text[char.len_utf8()..],
