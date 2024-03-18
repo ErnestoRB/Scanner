@@ -1,8 +1,9 @@
 #![allow(non_camel_case_types)]
 
 use phf::phf_map;
+use serde::{Deserialize, Serialize};
 
-#[derive(Clone, PartialEq, Debug)]
+#[derive(Serialize, Deserialize, Clone, PartialEq, Debug)]
 pub enum TokenType {
     INT,
     FLOAT,
@@ -99,19 +100,19 @@ pub static SYMBOLS: phf::Map<&'static str, TokenType> = phf_map! {
     ";" => TokenType::SCOL
 };
 
-#[derive(PartialEq, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Debug)]
 pub struct Token {
     pub token_type: TokenType,
     pub lexemme: String,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct Cursor {
     pub col: i32,
     pub lin: i32,
 }
 
-#[derive(Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Error {
     pub position: Cursor,
     pub message: String,
