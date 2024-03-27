@@ -44,6 +44,7 @@ pub fn get_token<'a>(mut text: &'a str, cursor: &mut Cursor) -> (Result<Token, E
                             save = true;
                         } else if c == '!' {
                             state = State::NEG;
+                            result_token = TokenType::NEG;
                             save = true;
                         } else if c == '<' {
                             state = State::LT;
@@ -159,20 +160,9 @@ pub fn get_token<'a>(mut text: &'a str, cursor: &mut Cursor) -> (Result<Token, E
                             state = State::DONE;
                             result_token = TokenType::NE;
                         } else {
-                            let mut error_cursor = cursor.clone();
-                            if c == '\n' {
-                                cursor.col = 0;
-                                cursor.lin += 1;
-                            }
-                            error_cursor.col += 1;
-                            return (
-                                Err(Error {
-                                    position: error_cursor,
-                                    message: format!("Simbolo '{}' no permitido", c),
-                                    lexemme: result,
-                                }),
-                                &text[char.len_utf8()..],
-                            );
+                            save = false;
+                            consume = false;
+                            state = State::DONE;
                         }
                     }
                     State::LINE_COM => {
@@ -278,7 +268,7 @@ pub fn get_token<'a>(mut text: &'a str, cursor: &mut Cursor) -> (Result<Token, E
                         text,
                     );
                 }
-                if matches!(state, State::BLOCK_COM_1) {
+                if matches!(state, State::BLOCK_COM_1) || matches!(state, State::BLOCK_COM_2) {
                     let new_cursor = cursor.clone();
                     return (
                         Err(Error {
@@ -543,6 +533,7 @@ pub mod tests {
         let mut text7 = String::from("/**adasd/");
         let mut text8 = String::from("/*/");
         let mut text9 = String::from("/*");
+        let mut text10 = String::from("/**");
         assert_eq!(
             get_token(&mut text1, &mut init_cursor()).0.unwrap(),
             Token {
@@ -588,6 +579,7 @@ pub mod tests {
         assert!(get_token(&mut text7, &mut init_cursor()).0.is_err());
         assert!(get_token(&mut text8, &mut init_cursor()).0.is_err());
         assert!(get_token(&mut text9, &mut init_cursor()).0.is_err());
+        assert!(get_token(&mut text10, &mut init_cursor()).0.is_err());
     }
 
     #[test]
@@ -698,6 +690,66 @@ pub mod tests {
             Token {
                 lexemme: symbol,
                 token_type: TokenType::RBRA
+            }
+        );
+    }
+
+    #[test]
+    pub fn get_token_rel_op() {
+        let mut symbol = String::from("!");
+        assert_eq!(
+            get_token(&mut symbol, &mut init_cursor()).0.unwrap(),
+            Token {
+                lexemme: symbol,
+                token_type: TokenType::NEG
+            }
+        );
+        let mut symbol = String::from("!=");
+        assert_eq!(
+            get_token(&mut symbol, &mut init_cursor()).0.unwrap(),
+            Token {
+                lexemme: symbol,
+                token_type: TokenType::NE
+            }
+        );
+        let mut symbol = String::from("==");
+        assert_eq!(
+            get_token(&mut symbol, &mut init_cursor()).0.unwrap(),
+            Token {
+                lexemme: symbol,
+                token_type: TokenType::EQ
+            }
+        );
+        let mut symbol = String::from("<");
+        assert_eq!(
+            get_token(&mut symbol, &mut init_cursor()).0.unwrap(),
+            Token {
+                lexemme: symbol,
+                token_type: TokenType::LT
+            }
+        );
+        let mut symbol = String::from("<=");
+        assert_eq!(
+            get_token(&mut symbol, &mut init_cursor()).0.unwrap(),
+            Token {
+                lexemme: symbol,
+                token_type: TokenType::LE
+            }
+        );
+        let mut symbol = String::from(">");
+        assert_eq!(
+            get_token(&mut symbol, &mut init_cursor()).0.unwrap(),
+            Token {
+                lexemme: symbol,
+                token_type: TokenType::GT
+            }
+        );
+        let mut symbol = String::from(">=");
+        assert_eq!(
+            get_token(&mut symbol, &mut init_cursor()).0.unwrap(),
+            Token {
+                lexemme: symbol,
+                token_type: TokenType::GE
             }
         );
     }

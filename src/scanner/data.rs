@@ -34,6 +34,7 @@ pub enum TokenType {
     GE,
     NE,
     EQ,
+    NEG, // !
     // Operadores logicos
     AND,
     OR,
@@ -97,7 +98,7 @@ pub static SYMBOLS: phf::Map<&'static str, TokenType> = phf_map! {
     ")" => TokenType::RPAR,
     "{" => TokenType::LBRA,
     "}" => TokenType::RBRA,
-    ";" => TokenType::SCOL
+    ";" => TokenType::SCOL,
 };
 
 #[derive(Serialize, Deserialize, PartialEq, Debug)]
