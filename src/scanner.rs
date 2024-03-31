@@ -364,7 +364,7 @@ pub mod tests {
     #[test]
     pub fn keyword_lookup_match() {
         assert!(matches!(reserved_lookup("main"), TokenType::MAIN));
-        assert!(matches!(reserved_lookup("int"), TokenType::INTEGER));
+        assert!(matches!(reserved_lookup("integer"), TokenType::INTEGER));
         assert!(matches!(reserved_lookup("double"), TokenType::DOUBLE));
         assert!(matches!(reserved_lookup("and"), TokenType::AND));
         assert!(matches!(reserved_lookup("or"), TokenType::OR));

@@ -7,7 +7,7 @@ use ::scanner::{
 
 #[test]
 fn it_tokenize_correctly() {
-    let (tokens, errors) = tokenize(r"int algo = 192");
+    let (tokens, errors) = tokenize(r"integer algo = 192");
     assert_eq!(tokens.len(), 4);
     assert_eq!(tokens.get(0).unwrap().token_type, TokenType::INTEGER);
     assert_eq!(tokens.get(1).unwrap().token_type, TokenType::ID);
@@ -18,13 +18,13 @@ fn it_tokenize_correctly() {
 
 #[test]
 fn it_tokenize_errors() {
-    let (tokens, errors) = tokenize(r"int algo = 192.");
+    let (tokens, errors) = tokenize(r"integer algo = 192.");
     assert_eq!(tokens.len(), 3);
     assert_eq!(tokens.get(0).unwrap().token_type, TokenType::INTEGER);
     assert_eq!(tokens.get(1).unwrap().token_type, TokenType::ID);
     assert_eq!(tokens.get(2).unwrap().token_type, TokenType::ASSIGN);
     assert_eq!(errors.len(), 1);
-    assert_eq!(errors.get(0).unwrap().position, Cursor { col: 15, lin: 1 })
+    assert_eq!(errors.get(0).unwrap().position, Cursor { col: 19, lin: 1 })
 }
 
 #[test]
@@ -33,8 +33,8 @@ fn it_tokenize() {
     float algo = 192.23;
     float _pos_algo = +192.23;
     float _neg_algo = +192.23;
-    int algo2 = 123;
-    int _res =  algo + algo2;
+    integer algo2 = 123;
+    integer _res =  algo + algo2;
     // comentario
     if (_res) { // otro comentario
 
