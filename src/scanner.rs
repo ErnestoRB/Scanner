@@ -29,6 +29,7 @@ pub fn get_token<'a>(mut text: &'a str, cursor: &mut Cursor) -> (Result<Token, E
                             save = true;
                         } else if c.is_ascii_alphabetic() || c == '_' {
                             state = State::ID;
+                            result_token = TokenType::ID;
                             save = true;
                         } else if c == '-' {
                             state = State::SUB;
@@ -480,11 +481,19 @@ pub mod tests {
 
     #[test]
     pub fn get_token_id() {
+        let mut text0 = String::from("a");
         let mut text1 = String::from("identificador");
         let mut text2 = String::from("_hola");
         let mut text3 = String::from("_var23");
         let mut text4 = String::from("_12var");
         let mut text5 = String::from("123");
+        assert_eq!(
+            get_token(&mut text0, &mut init_cursor()).0.unwrap(),
+            Token {
+                lexemme: text0,
+                token_type: TokenType::ID
+            }
+        );
         assert_eq!(
             get_token(&mut text1, &mut init_cursor()).0.unwrap(),
             Token {

@@ -29,7 +29,8 @@ fn it_tokenize_errors() {
 
 #[test]
 fn it_tokenize() {
-    let text = r"/** Este es un comentario **/    
+    let text = r"/** Este es un comentario **/ 
+    integer a = 12;  // Identificador de una sola letra 
     float algo = 192.23;
     float _pos_algo = +192.23;
     float _neg_algo = +192.23;
@@ -44,7 +45,7 @@ fn it_tokenize() {
     ";
     let (tokens, errors) = tokenize(text);
     assert_eq!(errors.len(), 0);
-    assert_eq!(tokens.len(), 1 + 5 + 5 + 5 + 5 + 7 + 1 + 6 + 1 + 5 + 9);
+    assert_eq!(tokens.len(), 1 + 6 + 5 + 5 + 5 + 5 + 7 + 1 + 6 + 1 + 5 + 9);
 }
 
 #[test]
