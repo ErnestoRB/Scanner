@@ -122,7 +122,8 @@ pub struct Cursor {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Error {
-    pub position: Cursor,
+    pub start: Cursor,
+    pub end: Cursor,
     pub message: String,
     pub lexemme: String,
 }

@@ -13,15 +13,22 @@ pub fn get_token<'a>(mut text: &'a str, cursor: &mut Cursor) -> (Result<Token, E
     let mut char: char = ' ';
     let mut save: bool;
     let mut consume: bool;
+    let mut start = cursor.clone();
     while !matches!(state, State::DONE) {
         save = false;
         consume = true;
         match text.chars().next() {
             Some(c) => {
                 char = c;
+                cursor.col += 1; // always move cursor
                 match state {
                     State::START => {
                         if ['\r', '\n', '\t', ' '].contains(&c) {
+                            if c == '\n' {
+                                cursor.lin += 1;
+                                cursor.col = 1;
+                            }
+                            start = cursor.clone();
                             save = false;
                         } else if c.is_ascii_digit() {
                             state = State::NUM;
@@ -65,16 +72,12 @@ pub fn get_token<'a>(mut text: &'a str, cursor: &mut Cursor) -> (Result<Token, E
                             if let Some(token) = SYMBOLS.get(c.to_string().as_str()) {
                                 result_token = token.clone();
                             } else {
-                                let mut error_cursor = cursor.clone();
-                                if c == '\n' {
-                                    cursor.col = 0;
-                                    cursor.lin += 1;
-                                }
-                                error_cursor.col += 1;
+                                let error_cursor = cursor.clone();
                                 return (
                                     Err(Error {
                                         message: format!("Simbolo '{}' no permitido", c),
-                                        position: error_cursor,
+                                        start,
+                                        end: error_cursor,
                                         lexemme: c.to_string(),
                                     }),
                                     &text[char.len_utf8()..],
@@ -150,6 +153,7 @@ pub fn get_token<'a>(mut text: &'a str, cursor: &mut Cursor) -> (Result<Token, E
                             state = State::DONE;
                             result_token = TokenType::GE;
                         } else {
+                            consume = false;
                             save = false;
                             state = State::DONE;
                             result_token = TokenType::GT;
@@ -169,6 +173,7 @@ pub fn get_token<'a>(mut text: &'a str, cursor: &mut Cursor) -> (Result<Token, E
                     State::LINE_COM => {
                         if c == '\n' {
                             save = false;
+                            consume = false;
                             state = State::DONE;
                             result_token = TokenType::INLINE_COMMENT;
                         } else {
@@ -182,6 +187,10 @@ pub fn get_token<'a>(mut text: &'a str, cursor: &mut Cursor) -> (Result<Token, E
                             state = State::BLOCK_COM_2;
                         } else {
                             save = true;
+                            if c == '\n' {
+                                cursor.lin += 1;
+                                cursor.col = 1;
+                            }
                         }
                     }
                     State::BLOCK_COM_2 => {
@@ -192,6 +201,10 @@ pub fn get_token<'a>(mut text: &'a str, cursor: &mut Cursor) -> (Result<Token, E
                         } else if c == '*' {
                             save = true;
                         } else {
+                            if c == '\n' {
+                                cursor.lin += 1;
+                                cursor.col = 1;
+                            }
                             save = true;
                             state = State::BLOCK_COM_1;
                         }
@@ -201,20 +214,18 @@ pub fn get_token<'a>(mut text: &'a str, cursor: &mut Cursor) -> (Result<Token, E
                             save = true;
                             state = State::FLOAT;
                         } else {
+                            cursor.col -= 1;
                             let error_cursor = cursor.clone();
-                            if c == '\n' {
-                                cursor.col = 0;
-                                cursor.lin += 1;
-                            }
                             return (
                                 Err(Error {
-                                    position: error_cursor,
+                                    start,
+                                    end: error_cursor,
                                     message:
                                         "Un número flotante debe tener números después del '.'"
                                             .to_string(),
                                     lexemme: result,
                                 }),
-                                &text[char.len_utf8()..],
+                                &text[..],
                             );
                         }
                     }
@@ -270,7 +281,8 @@ pub fn get_token<'a>(mut text: &'a str, cursor: &mut Cursor) -> (Result<Token, E
                     let new_cursor = cursor.clone();
                     return (
                         Err(Error {
-                            position: new_cursor,
+                            start,
+                            end: new_cursor,
                             message: "Los numeros flotantes deben ser seguidos de un número después del punto".to_string(),
                             lexemme: result
                         }),
@@ -281,7 +293,8 @@ pub fn get_token<'a>(mut text: &'a str, cursor: &mut Cursor) -> (Result<Token, E
                     let new_cursor = cursor.clone();
                     return (
                         Err(Error {
-                            position: new_cursor,
+                            start,
+                            end: new_cursor,
                             message: "El comentario no fue terminado correctamente".to_string(),
                             lexemme: result,
                         }),
@@ -296,11 +309,8 @@ pub fn get_token<'a>(mut text: &'a str, cursor: &mut Cursor) -> (Result<Token, E
         }
         if consume {
             text = &text[char.len_utf8()..];
-            cursor.col += 1;
-            if char == '\n' {
-                cursor.lin += 1;
-                cursor.col = 0;
-            }
+        } else {
+            cursor.col -= 1;
         }
     }
     if matches!(state, State::DONE) {
@@ -318,7 +328,8 @@ pub fn get_token<'a>(mut text: &'a str, cursor: &mut Cursor) -> (Result<Token, E
     (
         Err(Error {
             message: "Unexpected error".to_string(),
-            position: cursor.clone(),
+            start,
+            end: cursor.clone(),
             lexemme: result,
         }),
         text,

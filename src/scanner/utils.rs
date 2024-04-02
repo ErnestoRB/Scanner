@@ -7,12 +7,13 @@ pub fn fake_cursor() -> Cursor {
 }
 
 pub fn init_cursor() -> Cursor {
-    Cursor { col: 0, lin: 1 }
+    Cursor { col: 1, lin: 1 }
 }
 
 pub fn fake_error() -> Error {
     Error {
-        position: fake_cursor(),
+        start: fake_cursor(),
+        end: fake_cursor(),
         message: "Fake Error".to_string(),
         lexemme: "fake".to_string(),
     }

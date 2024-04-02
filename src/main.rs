@@ -79,8 +79,13 @@ fn main() {
 
                     for err in res.1.iter() {
                         eprintln!(
-                            "ERROR: ({}, [{}, {}]): {} ",
-                            file, err.position.col, err.position.lin, err.message,
+                            "ERROR: ({}, [({}, {})-({},{})]): {} ",
+                            file,
+                            err.start.col,
+                            err.start.lin,
+                            err.end.col,
+                            err.end.lin,
+                            err.message,
                         );
                     }
                 } else if let Err(e) = tokenization {
