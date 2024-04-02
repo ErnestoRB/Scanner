@@ -232,6 +232,10 @@ pub fn get_token<'a>(mut text: &'a str, cursor: &mut Cursor) -> (Result<Token, E
                         if c.is_ascii_digit() {
                             save = true;
                             state = State::NUM;
+                        } else if c == '-' {
+                            result_token = TokenType::DEC;
+                            state = State::DONE;
+                            save = true;
                         } else {
                             save = false;
                             consume = false;
@@ -243,6 +247,10 @@ pub fn get_token<'a>(mut text: &'a str, cursor: &mut Cursor) -> (Result<Token, E
                         if c.is_ascii_digit() {
                             save = true;
                             state = State::NUM;
+                        } else if c == '+' {
+                            result_token = TokenType::INC;
+                            state = State::DONE;
+                            save = true;
                         } else {
                             save = false;
                             consume = false;
@@ -365,6 +373,8 @@ pub mod tests {
     #[test]
     pub fn keyword_lookup_match() {
         assert!(matches!(reserved_lookup("main"), TokenType::MAIN));
+        assert!(matches!(reserved_lookup("stdin"), TokenType::STDIN));
+        assert!(matches!(reserved_lookup("stdout"), TokenType::STDOUT));
         assert!(matches!(reserved_lookup("integer"), TokenType::INTEGER));
         assert!(matches!(reserved_lookup("double"), TokenType::DOUBLE));
         assert!(matches!(reserved_lookup("and"), TokenType::AND));
@@ -436,6 +446,14 @@ pub mod tests {
             get_token(&mut text5, &mut init_cursor()).0.unwrap(),
             Token {
                 lexemme: text5,
+                token_type: TokenType::FLOAT
+            }
+        );
+        let mut text = String::from("34.34.34.34");
+        assert_ne!(
+            get_token(&mut text, &mut init_cursor()).0.unwrap(),
+            Token {
+                lexemme: text,
                 token_type: TokenType::FLOAT
             }
         )
@@ -639,6 +657,22 @@ pub mod tests {
             Token {
                 lexemme: operator,
                 token_type: TokenType::POWER
+            }
+        );
+        let mut operator = String::from("++");
+        assert_eq!(
+            get_token(&mut operator, &mut init_cursor()).0.unwrap(),
+            Token {
+                lexemme: operator,
+                token_type: TokenType::INC
+            }
+        );
+        let mut operator = String::from("--");
+        assert_eq!(
+            get_token(&mut operator, &mut init_cursor()).0.unwrap(),
+            Token {
+                lexemme: operator,
+                token_type: TokenType::DEC
             }
         );
     }

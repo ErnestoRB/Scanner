@@ -19,6 +19,9 @@ pub enum TokenType {
     CASE,
     INTEGER,
     DOUBLE,
+    // objetos
+    STDIN,
+    STDOUT,
     MAIN,
     // Operadores aritmeticos
     SUM,
@@ -27,6 +30,8 @@ pub enum TokenType {
     DIV,
     MODULUS,
     POWER,
+    INC, // ++
+    DEC, // --
     // Operadores relacionales
     LT,
     LE,
@@ -84,7 +89,9 @@ pub static KEYWORDS: phf::Map<&'static str, TokenType> = phf_map! {
     "double" => TokenType::DOUBLE,
     "main" => TokenType::MAIN,
     "and" => TokenType::AND,
-    "or" => TokenType::OR
+    "or" => TokenType::OR,
+    "stdin" => TokenType::STDIN,
+    "stdout" => TokenType::STDOUT
 };
 
 pub static SYMBOLS: phf::Map<&'static str, TokenType> = phf_map! {
