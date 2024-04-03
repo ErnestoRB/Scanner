@@ -44,7 +44,6 @@ pub enum TokenType {
     AND,
     OR,
     // Simbolos
-    DOT,
     COMMA,
     LPAR,
     RPAR,
@@ -99,7 +98,6 @@ pub static SYMBOLS: phf::Map<&'static str, TokenType> = phf_map! {
     "*" => TokenType::TIMES,
     "%" => TokenType::MODULUS,
     "^" => TokenType::POWER,
-    "." => TokenType::DOT,
     "," => TokenType::COMMA,
     "(" => TokenType::LPAR,
     ")" => TokenType::RPAR,

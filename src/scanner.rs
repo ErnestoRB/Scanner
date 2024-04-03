@@ -698,14 +698,6 @@ pub mod tests {
                 token_type: TokenType::COMMA
             }
         );
-        let mut symbol = String::from(".");
-        assert_eq!(
-            get_token(&mut symbol, &mut init_cursor()).0.unwrap(),
-            Token {
-                lexemme: symbol,
-                token_type: TokenType::DOT
-            }
-        );
         let mut symbol = String::from(";");
         assert_eq!(
             get_token(&mut symbol, &mut init_cursor()).0.unwrap(),

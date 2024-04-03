@@ -42,11 +42,11 @@ fn it_tokenize() {
 
     }
     switch case main do while
-    <= >= == != - * ^ . %
+    <= >= == != - * ^ %
     ";
     let (tokens, errors) = tokenize(text);
     assert_eq!(errors.len(), 0);
-    assert_eq!(tokens.len(), 1 + 6 + 5 + 5 + 5 + 5 + 7 + 1 + 6 + 1 + 5 + 9);
+    assert_eq!(tokens.len(), 1 + 6 + 5 + 5 + 5 + 5 + 7 + 1 + 6 + 1 + 5 + 8);
 }
 
 #[test]
@@ -88,15 +88,17 @@ fn it_tokenize_large_file() {
     let path = Path::new(".").join("data").join("test_large.cat");
     let result = tokenize_file(path.to_str().unwrap());
     if let Ok((tokens, errors)) = result {
-        assert_eq!(errors.len(), 2);
+        assert_eq!(errors.len(), 3);
         assert_eq!(errors.get(0).unwrap().start, Cursor { col: 9, lin: 4 });
         assert_eq!(errors.get(0).unwrap().end, Cursor { col: 10, lin: 4 });
         assert_eq!(errors.get(1).unwrap().start, Cursor { col: 25, lin: 4 });
         assert_eq!(errors.get(1).unwrap().end, Cursor { col: 28, lin: 4 });
+        assert_eq!(errors.get(2).unwrap().start, Cursor { col: 6, lin: 5 });
+        assert_eq!(errors.get(2).unwrap().end, Cursor { col: 7, lin: 5 });
         assert_eq!(
             tokens.len(),
             1 + 11
-                + 4
+                + 3
                 + 2
                 + 8
                 + 8
