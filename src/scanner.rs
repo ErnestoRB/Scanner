@@ -350,6 +350,11 @@ pub fn tokenize(contents: &str) -> (Vec<Token>, Vec<Error>) {
                 if matches!(tkn.token_type, TokenType::EOF) {
                     break;
                 }
+                if matches!(tkn.token_type, TokenType::BLOCK_COMMENT)
+                    || matches!(tkn.token_type, TokenType::INLINE_COMMENT)
+                {
+                    continue;
+                }
                 tokens.push(tkn);
             }
             Err(err) => errors.push(err),

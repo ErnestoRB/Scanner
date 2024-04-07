@@ -46,7 +46,7 @@ fn it_tokenize() {
     ";
     let (tokens, errors) = tokenize(text);
     assert_eq!(errors.len(), 0);
-    assert_eq!(tokens.len(), 1 + 6 + 5 + 5 + 5 + 5 + 7 + 1 + 6 + 1 + 5 + 8);
+    assert_eq!(tokens.len(), 5 + 5 + 5 + 5 + 5 + 7 + 5 + 1 + 5 + 8);
 }
 
 #[test]
@@ -55,7 +55,7 @@ fn it_tokenize_file() {
     let result = tokenize_file(path.to_str().unwrap());
     if let Ok((tokens, errors)) = result {
         assert_eq!(errors.len(), 0);
-        assert_eq!(tokens.len(), 5 + 5 + 5 + 9 + 6 + 1 + 1 + 5 + 7 + 6 + 1 + 1);
+        assert_eq!(tokens.len(), 5 + 5 + 5 + 9 + 6 + 1 + 5 + 7 + 5 + 1 + 1);
     } else if let Err(e) = result {
         println!("{}", e)
     }
@@ -77,7 +77,7 @@ fn it_tokenize_file_errors() {
         assert_eq!(errors.get(3).unwrap().end, Cursor { col: 7, lin: 17 });
         assert_eq!(errors.get(4).unwrap().start, Cursor { col: 1, lin: 20 });
         assert_eq!(errors.get(4).unwrap().end, Cursor { col: 7, lin: 20 });
-        assert_eq!(tokens.len(), 5 + 5 + 5 + 9 + 6 + 1 + 1 + 5 + 7 + 6 + 1 + 1);
+        assert_eq!(tokens.len(), 5 + 5 + 5 + 9 + 5 + 1 + 5 + 7 + 6 + 1 + 1);
     } else if let Err(e) = result {
         println!("{}", e);
     }
@@ -97,50 +97,50 @@ fn it_tokenize_large_file() {
         assert_eq!(errors.get(2).unwrap().end, Cursor { col: 7, lin: 5 });
         assert_eq!(
             tokens.len(),
-            1 + 11
-                + 3
+            10
                 + 2
-                + 8
-                + 8
-                + 5
-                + 5
-                + 5
+                + 1
                 + 7
+                + 7
+                + 4
+                + 4
+                + 4
                 + 6
-                + 6
-                + 13
-                + 14
+                + 5
+                + 5
                 + 12
-                + 10
-                + 5
-                + 8
-                + 6
-                + 2
-                + 9
-                + 5
-                + 2
-                + 5
-                + 3
-                + 6
-                + 3
-                + 3
-                + 3
-                + 4
-                + 6
-                + 2
+                + 13
                 + 11
-                + 19
+                + 9
                 + 4
                 + 7
-                + 3
                 + 5
-                + 2
-                + 4
+                + 1
                 + 8
                 + 4
+                + 1
                 + 4
+                + 2
+                + 5
+                + 2
+                + 2
+                + 2
+                + 3
+                + 5
+                + 1
+                + 10
+                + 18
+                + 3
+                + 6
+                + 2
+                + 4
+                + 1
+                + 3
+                + 7
+                + 3
                 + 3
                 + 2
+                + 1
         );
     } else if let Err(e) = result {
         println!("{}", e)
