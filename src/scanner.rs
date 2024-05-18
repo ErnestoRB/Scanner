@@ -1,7 +1,7 @@
 pub mod data;
 pub mod utils;
 
-use std::{arch::x86_64, fs::File, io::Read};
+use std::{fs::File, io::Read};
 
 use data::*;
 use utils::*;
