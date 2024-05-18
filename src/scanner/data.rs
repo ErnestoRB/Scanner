@@ -106,7 +106,7 @@ pub static SYMBOLS: phf::Map<&'static str, TokenType> = phf_map! {
     ";" => TokenType::SCOL,
 };
 
-#[derive(Serialize, Deserialize, PartialEq, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
 pub struct Token {
     pub token_type: TokenType,
     pub lexemme: String,
@@ -120,7 +120,7 @@ pub struct Cursor {
     pub lin: i32,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct Error {
     pub start: Cursor,
     pub end: Cursor,
