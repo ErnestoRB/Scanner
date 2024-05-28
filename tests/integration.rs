@@ -17,6 +17,19 @@ fn it_tokenize_correctly() {
 }
 
 #[test]
+fn it_tokenize_relational() {
+    let (tokens, errors) = tokenize(r"a=3 == 3;");
+    assert_eq!(tokens.len(), 6);
+    assert_eq!(tokens.get(0).unwrap().token_type, TokenType::ID);
+    assert_eq!(tokens.get(1).unwrap().token_type, TokenType::ASSIGN);
+    assert_eq!(tokens.get(2).unwrap().token_type, TokenType::INT);
+    assert_eq!(tokens.get(3).unwrap().token_type, TokenType::EQ);
+    assert_eq!(tokens.get(4).unwrap().token_type, TokenType::INT);
+    assert_eq!(tokens.get(5).unwrap().token_type, TokenType::SCOL);
+    assert_eq!(errors.len(), 0);
+}
+
+#[test]
 fn it_tokenize_errors() {
     let (tokens, errors) = tokenize(r"integer algo = 192.");
     assert_eq!(tokens.len(), 3);
@@ -97,8 +110,7 @@ fn it_tokenize_large_file() {
         assert_eq!(errors.get(2).unwrap().end, Cursor { col: 7, lin: 5 });
         assert_eq!(
             tokens.len(),
-            10
-                + 2
+            10 + 2
                 + 1
                 + 7
                 + 7

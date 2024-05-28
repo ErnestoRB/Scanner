@@ -29,7 +29,8 @@ pub fn get_token<'a>(mut text: &'a str, cursor: &mut Cursor) -> (Result<Token, E
                                 cursor.lin += 1;
                                 cursor.col = 1;
                             } else if c == '\r' {
-                                if cursor.col >= 2 { // Se comprueba que sea col 2 y no col 1 (inicio de linea) porque ya subio uno en la linea superior
+                                if cursor.col >= 2 {
+                                    // Se comprueba que sea col 2 y no col 1 (inicio de linea) porque ya subio uno en la linea superior
                                     // antes del match
                                     cursor.col -= 1;
                                 }
@@ -94,6 +95,7 @@ pub fn get_token<'a>(mut text: &'a str, cursor: &mut Cursor) -> (Result<Token, E
                     State::EQ => {
                         if c == '=' {
                             save = true;
+                            state = State::DONE;
                             result_token = TokenType::EQ;
                         } else {
                             save = false;
@@ -330,7 +332,7 @@ pub fn get_token<'a>(mut text: &'a str, cursor: &mut Cursor) -> (Result<Token, E
             Ok(Token {
                 token_type: result_token,
                 start,
-                end: cursor.clone(),    
+                end: cursor.clone(),
                 lexemme: result,
             }),
             text,
@@ -436,8 +438,8 @@ pub mod tests {
             Token {
                 lexemme: "".to_string(), // no se debe guardar esta info
                 token_type: TokenType::EOF,
-                start:Cursor { col: 2, lin: 2 },
-                end:Cursor { col: 2, lin: 2 }
+                start: Cursor { col: 2, lin: 2 },
+                end: Cursor { col: 2, lin: 2 }
             }
         )
     }
@@ -462,8 +464,7 @@ pub mod tests {
             get_token(&mut text2, &mut init_cursor()).0.unwrap(),
             Token {
                 lexemme: text2,
-                token_type: TokenType::FLOAT
-                ,
+                token_type: TokenType::FLOAT,
                 start: init_cursor(),
                 end: Cursor { col: 9, lin: 1 }
             }
@@ -472,8 +473,7 @@ pub mod tests {
             get_token(&mut text3, &mut init_cursor()).0.unwrap(),
             Token {
                 lexemme: text3,
-                token_type: TokenType::FLOAT
-                ,
+                token_type: TokenType::FLOAT,
                 start: init_cursor(),
                 end: Cursor { col: 8, lin: 1 }
             }
@@ -483,8 +483,7 @@ pub mod tests {
             get_token(&mut text5, &mut init_cursor()).0.unwrap(),
             Token {
                 lexemme: text5,
-                token_type: TokenType::FLOAT
-                ,
+                token_type: TokenType::FLOAT,
                 start: init_cursor(),
                 end: Cursor { col: 6, lin: 1 }
             }
@@ -515,8 +514,6 @@ pub mod tests {
                 token_type: TokenType::INT,
                 start: init_cursor(),
                 end: Cursor { col: 6, lin: 1 }
-                
-
             }
         );
         assert_eq!(
@@ -532,8 +529,7 @@ pub mod tests {
             get_token(&mut text3, &mut init_cursor()).0.unwrap(),
             Token {
                 lexemme: text3,
-                token_type: TokenType::INT
-                ,
+                token_type: TokenType::INT,
                 start: init_cursor(),
                 end: Cursor { col: 5, lin: 1 }
             }
@@ -543,8 +539,7 @@ pub mod tests {
             get_token(&mut text5, &mut init_cursor()).0.unwrap(),
             Token {
                 lexemme: text5,
-                token_type: TokenType::INT
-                ,
+                token_type: TokenType::INT,
                 start: init_cursor(),
                 end: Cursor { col: 4, lin: 1 }
             }
@@ -564,7 +559,7 @@ pub mod tests {
             Token {
                 lexemme: text0,
                 token_type: TokenType::ID,
-                
+
                 start: init_cursor(),
                 end: Cursor { col: 2, lin: 1 }
             }
@@ -585,7 +580,6 @@ pub mod tests {
                 token_type: TokenType::ID,
                 start: init_cursor(),
                 end: Cursor { col: 6, lin: 1 }
-                
             }
         );
         assert_eq!(
@@ -601,8 +595,7 @@ pub mod tests {
             get_token(&mut text4, &mut init_cursor()).0.unwrap(),
             Token {
                 lexemme: text4,
-                token_type: TokenType::ID
-                ,
+                token_type: TokenType::ID,
                 start: init_cursor(),
                 end: Cursor { col: 7, lin: 1 }
             }
@@ -611,8 +604,7 @@ pub mod tests {
             get_token(&mut text5, &mut init_cursor()).0.unwrap(),
             Token {
                 lexemme: text5,
-                token_type: TokenType::ID
-                ,
+                token_type: TokenType::ID,
                 start: init_cursor(),
                 end: Cursor { col: 3, lin: 1 }
             }
@@ -635,8 +627,7 @@ pub mod tests {
             get_token(&mut text1, &mut init_cursor()).0.unwrap(),
             Token {
                 lexemme: text1,
-                token_type: TokenType::INLINE_COMMENT
-                ,
+                token_type: TokenType::INLINE_COMMENT,
                 start: init_cursor(),
                 end: Cursor { col: 3, lin: 1 }
             }
@@ -645,8 +636,7 @@ pub mod tests {
             get_token(&mut text2, &mut init_cursor()).0.unwrap(),
             Token {
                 lexemme: "//".to_string(),
-                token_type: TokenType::INLINE_COMMENT
-                ,
+                token_type: TokenType::INLINE_COMMENT,
                 start: init_cursor(),
                 end: Cursor { col: 3, lin: 1 }
             }
@@ -664,8 +654,7 @@ pub mod tests {
             get_token(&mut text4, &mut init_cursor()).0.unwrap(),
             Token {
                 lexemme: text4,
-                token_type: TokenType::INLINE_COMMENT
-                ,
+                token_type: TokenType::INLINE_COMMENT,
                 start: init_cursor(),
                 end: Cursor { col: 9, lin: 1 }
             }
@@ -697,12 +686,11 @@ pub mod tests {
     #[test]
     pub fn get_token_operators() {
         let mut operator = String::from("+");
-         assert_eq!(
+        assert_eq!(
             get_token(&mut operator, &mut init_cursor()).0.unwrap(),
             Token {
                 lexemme: operator,
-                token_type: TokenType::SUM
-                ,
+                token_type: TokenType::SUM,
                 start: init_cursor(),
                 end: Cursor { col: 2, lin: 1 }
             }
@@ -712,8 +700,7 @@ pub mod tests {
             get_token(&mut operator, &mut init_cursor()).0.unwrap(),
             Token {
                 lexemme: operator,
-                token_type: TokenType::MIN
-                ,
+                token_type: TokenType::MIN,
                 start: init_cursor(),
                 end: Cursor { col: 2, lin: 1 }
             }
@@ -723,8 +710,7 @@ pub mod tests {
             get_token(&mut operator, &mut init_cursor()).0.unwrap(),
             Token {
                 lexemme: operator,
-                token_type: TokenType::TIMES
-                ,
+                token_type: TokenType::TIMES,
                 start: init_cursor(),
                 end: Cursor { col: 2, lin: 1 }
             }
@@ -734,8 +720,7 @@ pub mod tests {
             get_token(&mut operator, &mut init_cursor()).0.unwrap(),
             Token {
                 lexemme: operator,
-                token_type: TokenType::DIV
-                ,
+                token_type: TokenType::DIV,
                 start: init_cursor(),
                 end: Cursor { col: 2, lin: 1 }
             }
@@ -745,8 +730,7 @@ pub mod tests {
             get_token(&mut operator, &mut init_cursor()).0.unwrap(),
             Token {
                 lexemme: operator,
-                token_type: TokenType::MODULUS
-                ,
+                token_type: TokenType::MODULUS,
                 start: init_cursor(),
                 end: Cursor { col: 2, lin: 1 }
             }
@@ -757,7 +741,7 @@ pub mod tests {
             Token {
                 lexemme: operator,
                 token_type: TokenType::POWER,
-                
+
                 start: init_cursor(),
                 end: Cursor { col: 2, lin: 1 }
             }
@@ -768,7 +752,7 @@ pub mod tests {
             Token {
                 lexemme: operator,
                 token_type: TokenType::INC,
-                
+
                 start: init_cursor(),
                 end: Cursor { col: 3, lin: 1 }
             }
@@ -778,8 +762,7 @@ pub mod tests {
             get_token(&mut operator, &mut init_cursor()).0.unwrap(),
             Token {
                 lexemme: operator,
-                token_type: TokenType::DEC
-                ,
+                token_type: TokenType::DEC,
                 start: init_cursor(),
                 end: Cursor { col: 3, lin: 1 }
             }
@@ -794,7 +777,7 @@ pub mod tests {
             Token {
                 lexemme: symbol,
                 token_type: TokenType::COMMA,
-                
+
                 start: init_cursor(),
                 end: Cursor { col: 2, lin: 1 }
             }
@@ -804,8 +787,7 @@ pub mod tests {
             get_token(&mut symbol, &mut init_cursor()).0.unwrap(),
             Token {
                 lexemme: symbol,
-                token_type: TokenType::SCOL
-                ,
+                token_type: TokenType::SCOL,
                 start: init_cursor(),
                 end: Cursor { col: 2, lin: 1 }
             }
@@ -815,8 +797,7 @@ pub mod tests {
             get_token(&mut symbol, &mut init_cursor()).0.unwrap(),
             Token {
                 lexemme: symbol,
-                token_type: TokenType::LPAR
-                ,
+                token_type: TokenType::LPAR,
                 start: init_cursor(),
                 end: Cursor { col: 2, lin: 1 }
             }
@@ -826,8 +807,7 @@ pub mod tests {
             get_token(&mut symbol, &mut init_cursor()).0.unwrap(),
             Token {
                 lexemme: symbol,
-                token_type: TokenType::RPAR
-                ,
+                token_type: TokenType::RPAR,
                 start: init_cursor(),
                 end: Cursor { col: 2, lin: 1 }
             }
@@ -837,8 +817,7 @@ pub mod tests {
             get_token(&mut symbol, &mut init_cursor()).0.unwrap(),
             Token {
                 lexemme: symbol,
-                token_type: TokenType::LBRA
-                ,
+                token_type: TokenType::LBRA,
                 start: init_cursor(),
                 end: Cursor { col: 2, lin: 1 }
             }
@@ -849,7 +828,7 @@ pub mod tests {
             Token {
                 lexemme: symbol,
                 token_type: TokenType::RBRA,
-                
+
                 start: init_cursor(),
                 end: Cursor { col: 2, lin: 1 }
             }
@@ -863,8 +842,7 @@ pub mod tests {
             get_token(&mut symbol, &mut init_cursor()).0.unwrap(),
             Token {
                 lexemme: symbol,
-                token_type: TokenType::NEG
-                ,
+                token_type: TokenType::NEG,
                 start: init_cursor(),
                 end: Cursor { col: 2, lin: 1 }
             }
@@ -874,8 +852,7 @@ pub mod tests {
             get_token(&mut symbol, &mut init_cursor()).0.unwrap(),
             Token {
                 lexemme: symbol,
-                token_type: TokenType::NE
-                ,
+                token_type: TokenType::NE,
                 start: init_cursor(),
                 end: Cursor { col: 3, lin: 1 }
             }
@@ -886,7 +863,7 @@ pub mod tests {
             Token {
                 lexemme: symbol,
                 token_type: TokenType::EQ,
-                
+
                 start: init_cursor(),
                 end: Cursor { col: 3, lin: 1 }
             }
@@ -896,8 +873,7 @@ pub mod tests {
             get_token(&mut symbol, &mut init_cursor()).0.unwrap(),
             Token {
                 lexemme: symbol,
-                token_type: TokenType::LT
-                ,
+                token_type: TokenType::LT,
                 start: init_cursor(),
                 end: Cursor { col: 2, lin: 1 }
             }
@@ -907,8 +883,7 @@ pub mod tests {
             get_token(&mut symbol, &mut init_cursor()).0.unwrap(),
             Token {
                 lexemme: symbol,
-                token_type: TokenType::LE
-                ,
+                token_type: TokenType::LE,
                 start: init_cursor(),
                 end: Cursor { col: 3, lin: 1 }
             }
@@ -918,8 +893,7 @@ pub mod tests {
             get_token(&mut symbol, &mut init_cursor()).0.unwrap(),
             Token {
                 lexemme: symbol,
-                token_type: TokenType::GT
-                ,
+                token_type: TokenType::GT,
                 start: init_cursor(),
                 end: Cursor { col: 2, lin: 1 }
             }
@@ -930,7 +904,7 @@ pub mod tests {
             Token {
                 lexemme: symbol,
                 token_type: TokenType::GE,
-                
+
                 start: init_cursor(),
                 end: Cursor { col: 3, lin: 1 }
             }
