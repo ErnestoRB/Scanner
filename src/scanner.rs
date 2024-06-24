@@ -37,7 +37,7 @@ pub fn get_token<'a>(mut text: &'a str, cursor: &mut Cursor) -> (Result<Token, E
                             }
                             start = cursor.clone();
                             save = false;
-                        } else if c.is_ascii_digit() {
+                        } else if c.is_digit(10) {
                             state = State::NUM;
                             result_token = TokenType::INT;
                             save = true;
@@ -119,7 +119,7 @@ pub fn get_token<'a>(mut text: &'a str, cursor: &mut Cursor) -> (Result<Token, E
                         }
                     }
                     State::NUM => {
-                        if c.is_ascii_digit() {
+                        if c.is_digit(10) {
                             save = true;
                             result_token = TokenType::INT;
                         } else if c == '.' {
@@ -133,7 +133,7 @@ pub fn get_token<'a>(mut text: &'a str, cursor: &mut Cursor) -> (Result<Token, E
                         }
                     }
                     State::ID => {
-                        if c == '_' || c.is_ascii_alphabetic() || c.is_ascii_digit() {
+                        if c == '_' || c.is_ascii_alphabetic() || c.is_digit(10) {
                             save = true;
                             result_token = TokenType::ID;
                         } else {
@@ -218,9 +218,10 @@ pub fn get_token<'a>(mut text: &'a str, cursor: &mut Cursor) -> (Result<Token, E
                         }
                     }
                     State::FLOAT_DOT => {
-                        if c.is_ascii_digit() {
+                        if c.is_digit(10) {
                             save = true;
                             state = State::FLOAT;
+                            result_token = TokenType::FLOAT;
                         } else {
                             cursor.col -= 1;
                             let error_cursor = cursor.clone();
@@ -238,8 +239,7 @@ pub fn get_token<'a>(mut text: &'a str, cursor: &mut Cursor) -> (Result<Token, E
                         }
                     }
                     State::FLOAT => {
-                        if c.is_ascii_digit() {
-                            result_token = TokenType::FLOAT;
+                        if c.is_digit(10) {
                             save = true;
                         } else {
                             state = State::DONE;
@@ -248,7 +248,7 @@ pub fn get_token<'a>(mut text: &'a str, cursor: &mut Cursor) -> (Result<Token, E
                         }
                     }
                     State::SUB => {
-                        if c.is_ascii_digit() {
+                        if c.is_digit(10) {
                             save = true;
                             state = State::NUM;
                         } else if c == '-' {
@@ -263,7 +263,7 @@ pub fn get_token<'a>(mut text: &'a str, cursor: &mut Cursor) -> (Result<Token, E
                         }
                     }
                     State::ADD => {
-                        if c.is_ascii_digit() {
+                        if c.is_digit(10) {
                             save = true;
                             state = State::NUM;
                         } else if c == '+' {
