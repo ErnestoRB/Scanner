@@ -248,10 +248,7 @@ pub fn get_token<'a>(mut text: &'a str, cursor: &mut Cursor) -> (Result<Token, E
                         }
                     }
                     State::SUB => {
-                        if c.is_digit(10) {
-                            save = true;
-                            state = State::NUM;
-                        } else if c == '-' {
+                        if c == '-' {
                             result_token = TokenType::DEC;
                             state = State::DONE;
                             save = true;
@@ -263,10 +260,7 @@ pub fn get_token<'a>(mut text: &'a str, cursor: &mut Cursor) -> (Result<Token, E
                         }
                     }
                     State::ADD => {
-                        if c.is_digit(10) {
-                            save = true;
-                            state = State::NUM;
-                        } else if c == '+' {
+                        if c == '+' {
                             result_token = TokenType::INC;
                             state = State::DONE;
                             save = true;
@@ -446,29 +440,9 @@ pub mod tests {
 
     #[test]
     pub fn get_token_float() {
-        let mut text1 = String::from("+1289.23");
-        let mut text2 = String::from("-1289.23");
         let mut text3 = String::from("1289.23");
         let mut text4 = String::from("1289.");
         let mut text5 = String::from("1289");
-        assert_eq!(
-            get_token(&mut text1, &mut init_cursor()).0.unwrap(),
-            Token {
-                lexemme: text1,
-                token_type: TokenType::FLOAT,
-                start: init_cursor(),
-                end: Cursor { col: 9, lin: 1 }
-            }
-        );
-        assert_eq!(
-            get_token(&mut text2, &mut init_cursor()).0.unwrap(),
-            Token {
-                lexemme: text2,
-                token_type: TokenType::FLOAT,
-                start: init_cursor(),
-                end: Cursor { col: 9, lin: 1 }
-            }
-        );
         assert_eq!(
             get_token(&mut text3, &mut init_cursor()).0.unwrap(),
             Token {
@@ -502,29 +476,9 @@ pub mod tests {
 
     #[test]
     pub fn get_token_int() {
-        let mut text1 = String::from("+1289");
-        let mut text2 = String::from("-1289");
         let mut text3 = String::from("1289");
         let mut text4 = String::from("1289.");
         let mut text5 = String::from("asd");
-        assert_eq!(
-            get_token(&mut text1, &mut init_cursor()).0.unwrap(),
-            Token {
-                lexemme: text1,
-                token_type: TokenType::INT,
-                start: init_cursor(),
-                end: Cursor { col: 6, lin: 1 }
-            }
-        );
-        assert_eq!(
-            get_token(&mut text2, &mut init_cursor()).0.unwrap(),
-            Token {
-                lexemme: text2,
-                token_type: TokenType::INT,
-                start: init_cursor(),
-                end: Cursor { col: 6, lin: 1 }
-            }
-        );
         assert_eq!(
             get_token(&mut text3, &mut init_cursor()).0.unwrap(),
             Token {

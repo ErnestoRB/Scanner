@@ -59,7 +59,7 @@ fn it_tokenize() {
     ";
     let (tokens, errors) = tokenize(text);
     assert_eq!(errors.len(), 0);
-    assert_eq!(tokens.len(), 5 + 5 + 5 + 5 + 5 + 7 + 5 + 1 + 5 + 8);
+    assert_eq!(tokens.len(), 5 + 5 + 5 + 6 + 6 + 7 + 5 + 1 + 5 + 8);
 }
 
 #[test]
@@ -117,31 +117,31 @@ fn it_tokenize_large_file() {
                 + 4
                 + 4
                 + 4
+                + 8
                 + 6
-                + 5
-                + 5
-                + 12
-                + 13
-                + 11
-                + 9
+                + 6
+                + 16
+                + 14
+                + 14
+                + 10
                 + 4
                 + 7
-                + 5
+                + 6
                 + 1
                 + 8
                 + 4
                 + 1
                 + 4
                 + 2
-                + 5
+                + 6
                 + 2
                 + 2
                 + 2
                 + 3
-                + 5
+                + 6
                 + 1
-                + 10
-                + 18
+                + 12
+                + 19
                 + 3
                 + 6
                 + 2
